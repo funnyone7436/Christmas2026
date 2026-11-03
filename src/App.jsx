@@ -1,4 +1,4 @@
-import React, { Suspense, useRef, useEffect, useState, useMemo } from 'react'
+import React, { Suspense, useRef, useState, useMemo } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { EffectComposer, Bloom } from '@react-three/postprocessing'
 
@@ -6,7 +6,6 @@ import ChristmasBackground from './components/ChristmasBackground'
 import SantaSparks from './components/SantaSparks'
 import CameraOrbitController from './components/CameraController'
 import StarburstTopper from './components/StarburstTopper'
-import PoseMotionValueDetector from './components/PoseMotionValueDetector'
 import CircularGifts from './components/CircularGifts'
 import SkatingPenguins from './components/SkatingPenguins'
 
@@ -21,7 +20,6 @@ const CAMERA_PRESETS = {
 };
 
 export default function App() {
-  const poseLandmarksRef = useRef(null)
   const audioRef = useRef(null)
   const [isPlaying, setIsPlaying] = useState(false)
 
@@ -32,12 +30,6 @@ export default function App() {
       ...cfg
     }))
   }, [])
-
-  const handlePoseUpdate = (riggedPose) => {
-    if (riggedPose && riggedPose.raw2DLandmarks) {
-      poseLandmarksRef.current = riggedPose.raw2DLandmarks
-    }
-  }
 
   const handleStartMusic = () => {
     if (audioRef.current) {
@@ -53,7 +45,6 @@ export default function App() {
   return (
     <div style={{ width: '100vw', height: '100vh', backgroundColor: 'black', position: 'relative' }}>
       
-      {/* 🎵 Start Music & Experience Overlay Button */}
       {/* 🎵 Transparent Start Music Overlay */}
       {!isPlaying && (
         <div style={{
@@ -124,9 +115,6 @@ export default function App() {
         preload="auto" 
       />
 
-      {/* Hidden Pose Detector updating the shared ref */}
-      <PoseMotionValueDetector onPoseUpdate={handlePoseUpdate} debug={false} />
-
       <Canvas 
         dpr={[1, 2]} 
         gl={{ 
@@ -139,7 +127,6 @@ export default function App() {
           
           <CameraOrbitController 
             isAutoMode={true}
-            poseLandmarksRef={poseLandmarksRef}
             presetsList={presetsList}
             isLoopingStates={true}
             baseSpeed={0.3}
